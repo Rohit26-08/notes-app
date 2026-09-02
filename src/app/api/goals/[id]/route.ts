@@ -8,15 +8,14 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
   const { id } = await params;
   const body = await req.json();
-  const draft = await prisma.draft.update({
+  const goal = await prisma.goal.update({
     where: { id, userId },
     data: {
-      ...(body.title !== undefined && { title: body.title }),
-      ...(body.type !== undefined && { type: body.type }),
-      ...(body.content !== undefined && { content: body.content }),
+      ...(body.text !== undefined && { text: body.text }),
+      ...(body.done !== undefined && { done: body.done }),
     },
   });
-  return NextResponse.json(draft);
+  return NextResponse.json(goal);
 }
 
 export async function DELETE(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -24,6 +23,6 @@ export async function DELETE(_: NextRequest, { params }: { params: Promise<{ id:
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { id } = await params;
-  await prisma.draft.delete({ where: { id, userId } });
+  await prisma.goal.delete({ where: { id, userId } });
   return NextResponse.json({ ok: true });
 }

@@ -8,10 +8,13 @@ datasource db {
 
 model DayNote {
   id        String   @id @default(cuid())
-  date      String   @unique
+  date      String
   content   String   @default("")
+  userId    String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@unique([date, userId])
 }
 
 model Draft {
@@ -19,6 +22,31 @@ model Draft {
   title     String   @default("")
   type      String   @default("article")
   content   String   @default("")
+  userId    String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model HourLog {
+  id        String   @id @default(cuid())
+  date      String
+  hour      Int
+  content   String   @default("")
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([date, hour, userId])
+}
+
+model Goal {
+  id        String   @id @default(cuid())
+  weekStart String
+  text      String
+  done      Boolean  @default(false)
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([weekStart, userId])
 }

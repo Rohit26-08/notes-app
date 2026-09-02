@@ -40,13 +40,25 @@ model HourLog {
 }
 
 model Goal {
-  id        String   @id @default(cuid())
-  weekStart String
-  text      String
-  done      Boolean  @default(false)
-  userId    String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String      @id @default(cuid())
+  weekStart   String
+  text        String
+  description String      @default("")
+  userId      String
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  checks      GoalCheck[]
 
   @@index([weekStart, userId])
+}
+
+model GoalCheck {
+  id     String  @id @default(cuid())
+  goalId String
+  day    Int
+  done   Boolean @default(false)
+  userId String
+  goal   Goal    @relation(fields: [goalId], references: [id], onDelete: Cascade)
+
+  @@unique([goalId, day])
 }

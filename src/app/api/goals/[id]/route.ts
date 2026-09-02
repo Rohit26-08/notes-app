@@ -12,8 +12,9 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     where: { id, userId },
     data: {
       ...(body.text !== undefined && { text: body.text }),
-      ...(body.done !== undefined && { done: body.done }),
+      ...(body.description !== undefined && { description: body.description }),
     },
+    include: { checks: true },
   });
   return NextResponse.json(goal);
 }

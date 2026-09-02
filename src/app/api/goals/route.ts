@@ -10,6 +10,7 @@ export async function GET(req: NextRequest) {
   const goals = await prisma.goal.findMany({
     where: { userId, ...(weekStart ? { weekStart } : {}) },
     orderBy: { createdAt: "asc" },
+    include: { checks: true },
   });
   return NextResponse.json(goals);
 }
@@ -18,13 +19,14 @@ export async function POST(req: NextRequest) {
   const { userId } = await auth();
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { weekStart, text } = await req.json();
+  const { weekStart, text, description } = await req.json();
   if (!weekStart || !text) {
     return NextResponse.json({ error: "weekStart and text required" }, { status: 400 });
   }
 
   const goal = await prisma.goal.create({
-    data: { weekStart, text, userId },
+    data: { weekStart, text, description: description ?? "", userId },
+    include: { checks: true },
   });
   return NextResponse.json(goal);
 }

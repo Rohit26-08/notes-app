@@ -3,7 +3,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Placeholder from "@tiptap/extension-placeholder";
-import AiAssistBar from "@/components/AiAssistBar";
+import { AiAssist } from "@/lib/aiAssistExtension";
 
 const EMOJIS = ["😊","😂","🥹","😍","🤔","😴","😤","🥳","😎","🤯","💡","🔥","✅","❌","⚡","🎯","💬","📌","🚀","⭐","🌿","☀️","🌙","❄️","🏃","🍕","☕","🎵","📚","💪","🙏","❤️","💔","🧠","👀","💸","🏆","🎬","🎭","📝"];
 const TYPES  = [
@@ -49,6 +49,7 @@ export default function WritingDesk() {
         placeholder: "Start writing your draft… Use the toolbar to format.",
         emptyEditorClass: "is-empty",
       }),
+      AiAssist,
     ],
     content: "",
     immediatelyRender: false,
@@ -296,7 +297,9 @@ export default function WritingDesk() {
               <EditorContent editor={editor} className="h-full" />
             </div>
 
-            <AiAssistBar editor={editor} />
+            <p className="text-[10px] text-zinc-600">
+              AI: type and pause for a suggestion (Tab to accept, Esc to dismiss) · red underline = grammar suggestion
+            </p>
 
             {/* Save bar */}
             <div className="flex items-center gap-2 flex-wrap">

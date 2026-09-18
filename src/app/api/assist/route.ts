@@ -7,6 +7,26 @@ import { auth } from "@clerk/nextjs/server";
 const QWEN_MODEL = "qwen3.5-plus";
 const QWEN_ENDPOINT = "https://qwen.aikit.club/v1/chat/completions";
 
+const REFUSAL_PATTERNS = [
+  /random characters/i,
+  /does not appear to/i,
+  /no meaningful/i,
+  /cannot (assist|help|understand)/i,
+  /as an ai/i,
+  /i'm sorry/i,
+  /i am sorry/i,
+  /doesn'?t (make sense|appear)/i,
+];
+
+function cleanResult(raw: string | undefined): string {
+  if (!raw) return "";
+  // Strip qwen-api's trailing <!-- qwen_metadata: {...} --> and any other HTML comments.
+  const text = raw.replace(/<!--[\s\S]*?-->/g, "").trim();
+  if (!text) return "";
+  if (REFUSAL_PATTERNS.some(p => p.test(text))) return "";
+  return text;
+}
+
 function buildPrompt(action: string, text: string) {
   if (action === "grammar") {
     return (
@@ -18,8 +38,8 @@ function buildPrompt(action: string, text: string) {
   }
   return (
     "Continue the text below naturally, in the same tone and style. " +
-    "Reply with ONLY a short continuation (5-12 words), no explanations, no quotes. " +
-    "Do not repeat the given text.\n\n" +
+    "Reply with ONLY a short continuation (3-8 words), no explanations, no quotes. " +
+    "Do not repeat the given text. If the text is too short or unclear to continue, reply with an empty string.\n\n" +
     text
   );
 }
@@ -51,7 +71,7 @@ export async function POST(req: NextRequest) {
       model: QWEN_MODEL,
       messages: [{ role: "user", content: buildPrompt(action, text) }],
       temperature: action === "grammar" ? 0.2 : 0.7,
-      max_tokens: 200,
+      max_tokens: 120,
     }),
   });
 
@@ -60,6 +80,6 @@ export async function POST(req: NextRequest) {
   }
 
   const data = await res.json();
-  const result: string = data?.choices?.[0]?.message?.content?.trim() ?? "";
+  const result = cleanResult(data?.choices?.[0]?.message?.content);
   return NextResponse.json({ result });
 }

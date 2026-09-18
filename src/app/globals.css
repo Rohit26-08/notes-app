@@ -141,6 +141,21 @@
     margin: 1.25rem 0 !important;
   }
 
+  /* ── AI assist ── */
+  .ai-ghost-suggestion {
+    color: #6b6b8a;
+    font-style: italic;
+    pointer-events: none;
+    user-select: none;
+  }
+  .ai-grammar-underline {
+    text-decoration: underline;
+    text-decoration-style: wavy;
+    text-decoration-color: #f87171;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+    cursor: help;
+  }
 }
 
 /* Toolbar active state */

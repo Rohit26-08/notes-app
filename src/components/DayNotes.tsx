@@ -4,7 +4,7 @@ import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Placeholder from "@tiptap/extension-placeholder";
 import HourLogs from "@/components/HourLogs";
-import AiAssistBar from "@/components/AiAssistBar";
+import { AiAssist } from "@/lib/aiAssistExtension";
 
 const EMOJIS = ["😊","😂","🥹","😍","🤔","😴","😤","🥳","😎","🤯","💡","🔥","✅","❌","⚡","🎯","💬","📌","🚀","⭐","🌿","☀️","🌙","🌧️","❄️","🏃","🍕","☕","🎵","📚","💪","🙏","👏","❤️","💔","🧠","👀","💸","🏆","🎬"];
 
@@ -41,6 +41,7 @@ export default function DayNotes() {
         placeholder: "What happened today? Click a heading button to start…",
         emptyEditorClass: "is-empty",
       }),
+      AiAssist,
     ],
     content: "",
     immediatelyRender: false,
@@ -270,7 +271,9 @@ export default function DayNotes() {
           <EditorContent editor={editor} className="h-full" />
         </div>
 
-        <AiAssistBar editor={editor} />
+        <p className="text-[10px] text-zinc-600">
+          AI: type and pause for a suggestion (Tab to accept, Esc to dismiss) · red underline = grammar suggestion
+        </p>
 
         {/* Save bar */}
         <div className="flex items-center gap-2 flex-wrap">

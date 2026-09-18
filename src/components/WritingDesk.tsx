@@ -3,6 +3,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Placeholder from "@tiptap/extension-placeholder";
+import AiAssistBar from "@/components/AiAssistBar";
 
 const EMOJIS = ["😊","😂","🥹","😍","🤔","😴","😤","🥳","😎","🤯","💡","🔥","✅","❌","⚡","🎯","💬","📌","🚀","⭐","🌿","☀️","🌙","❄️","🏃","🍕","☕","🎵","📚","💪","🙏","❤️","💔","🧠","👀","💸","🏆","🎬","🎭","📝"];
 const TYPES  = [
@@ -294,6 +295,8 @@ export default function WritingDesk() {
             <div className="flex-1 bg-[#1a1a24] border border-[#2e2e3e] rounded-xl overflow-y-auto focus-within:border-violet-500/60 transition-colors min-h-[200px]">
               <EditorContent editor={editor} className="h-full" />
             </div>
+
+            <AiAssistBar editor={editor} />
 
             {/* Save bar */}
             <div className="flex items-center gap-2 flex-wrap">

@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 
-const QWEN_MODEL = "qwen-turbo";
-const QWEN_ENDPOINT = "https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/completions";
+// Unofficial proxy (encryptarun/qwen-api) in front of chat.qwen.ai's web session.
+// QWEN_API_KEY must be YOUR OWN chat.qwen.ai access_token, not the shared token
+// from the repo's README — that one is shared publicly and gets rate-limited/revoked.
+const QWEN_MODEL = "qwen3.5-plus";
+const QWEN_ENDPOINT = "https://qwen.aikit.club/v1/chat/completions";
 
 function buildPrompt(action: string, text: string) {
   if (action === "grammar") {

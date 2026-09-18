@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 
-const GEMINI_MODEL = "gemini-2.0-flash";
+const QWEN_MODEL = "qwen-turbo";
+const QWEN_ENDPOINT = "https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/completions";
 
 function buildPrompt(action: string, text: string) {
   if (action === "grammar") {
@@ -24,7 +25,7 @@ export async function POST(req: NextRequest) {
   const { userId } = await auth();
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const apiKey = process.env.GEMINI_API_KEY;
+  const apiKey = process.env.QWEN_API_KEY;
   if (!apiKey) {
     return NextResponse.json({ error: "AI assist is not configured" }, { status: 501 });
   }
@@ -37,23 +38,25 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "text too long" }, { status: 400 });
   }
 
-  const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${apiKey}`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: buildPrompt(action, text) }] }],
-        generationConfig: { temperature: action === "grammar" ? 0.2 : 0.7, maxOutputTokens: 200 },
-      }),
-    }
-  );
+  const res = await fetch(QWEN_ENDPOINT, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({
+      model: QWEN_MODEL,
+      messages: [{ role: "user", content: buildPrompt(action, text) }],
+      temperature: action === "grammar" ? 0.2 : 0.7,
+      max_tokens: 200,
+    }),
+  });
 
   if (!res.ok) {
     return NextResponse.json({ error: "AI provider error" }, { status: 502 });
   }
 
   const data = await res.json();
-  const result: string = data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ?? "";
+  const result: string = data?.choices?.[0]?.message?.content?.trim() ?? "";
   return NextResponse.json({ result });
 }
